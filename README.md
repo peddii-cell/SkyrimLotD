@@ -14,7 +14,8 @@
 - Deutsche Benutzeroberfläche, deutsche Itemnamen nur bei bekannten sicheren Übersetzungen; englische Quellnamen bleiben zum Nachschlagen erhalten
 - Anklickbare Sammelliste mit Fortschrittsanzeige und lokalem Browser-Speicher, JSON-Export und Import
 - Zoombare und verschiebbare Karte mit separat eingefärbten Queststart- und Fundregion-Markern, soweit sich die Quelle einer Region zuordnen lässt
-- Optionale Regionsübersicht mit der Anzahl zugehöriger Einträge; Umschaltung Himmelsrand / Solstheim / schematische Seelengrab-Orientierung
+- Keine Regionssummen mehr: Karte startet ohne Marker. Erst die Auswahl eines konkreten Gegenstands zeigt dessen Fundort; erneutes Klicken entfernt den Marker. Queststart kann im Detailbereich separat eingeblendet werden.
+- Umschaltung Himmelsrand / Solstheim / schematische Seelengrab-Orientierung, mit sofort sichtbaren Ersatzkarten, falls externe Kartenbilder nicht laden.
 
 ## Wichtig: Dies ist noch **keine verifizierte vollständige LotD-v6-Datenbank**
 
@@ -30,6 +31,7 @@ Die Quelltabelle enthält bei vielen Gegenständen den Fundort, den Museumsplatz
 - `app.js` — Suche, Filter, Karte, Fortschritt und Import/Export
 - `data/hall-01.json` … `data/hall-13.json` — nach Museumsraum gefilterte Sammlereinträge
 - `data/guides.json` — separate Queststationen und Sammelziele
+- `data/skyrim-places.json` — 350 weitere kanonische Skyrim-Orte (aus öffentlich dokumentiertem SSEEdit-MapMarker-Export, auf 2D-Atlaspositionen umgerechnet; Quellenverweis unten)
 
 **Community-Quelle:** https://docs.google.com/spreadsheets/d/1uWJs4adekvTOL-z7bRSf-JwUi7bX1bFQqlKPEv5k0qc/edit
 
@@ -54,4 +56,8 @@ Nicht kommerzielles Fanprojekt. Keine offizielle Seite von Bethesda oder den Lot
 
 ## Aktueller Stand (3. November 2026)
 
-Die GitHub-Dateien enthalten die neue Navigation. Ob GitHub Pages den neuesten Commit erfolgreich ausliefert, ist nicht automatisch verifiziert. Die 2.769 Museumseinträge sind weiterhin nicht vollständig einzeln auf Questgeber und Fundort geprüft. Die 35 zusätzlichen Sammelziele enthalten vorläufige Weltkarten-/Schemamarker; keine durchgängig exakte Navigation im Dungeon.
+Die GitHub-Dateien enthalten die neue Navigation. Ob GitHub Pages den neuesten Commit erfolgreich ausliefert, ist nicht automatisch verifiziert. Die 2.769 Museumseinträge sind weiterhin nicht vollständig einzeln auf Questgeber und Fundort geprüft. Die 35 zusätzlichen Sammelziele enthalten vorläufige Weltkarten-/Schemamarker; keine durchgängig exakte Navigation im Dungeon. **Stand 3. November 2026:** Für 1.217 der 2.769 Museumseinträge konnte anhand der vorhandenen Fundortangabe ein Weltkartenmarker zugeordnet werden (44,0 %). Darunter befinden sich nur ungefähre Orte und Einstiegspunkte, nicht ausschließlich einzeln bestätigte Loot-Koordinaten. 1.552 Einträge sind unkartiert, teils weil die Quelle nur `Random Loot`, Händler, Herstellung oder kein festes Ziel nennt, teils weil Ortsdaten noch fehlen. Die User-Anforderung „jedes Item mit festem Fundort auf der Karte“ ist noch nicht vollständig erfüllt.
+
+## Quellen für die Ortskoordinaten (November 2026)
+
+Ein Teil der Weltkartenmarker basiert auf einem veröffentlichten **SSEEdit MapMarker-Export** mit 350 Skyrim-Landmarks: https://github.com/lcbmann/keizaal-ranger-map/blob/main/data/skyrim-canon-atlas.generated.json. Für die Website wurden daraus nur Ortsnamen und Kartenpositionen übernommen und die Positionen auf Prozentwerte bezogen. Die zugehörige Kartenbild-Kalibrierung und LotD-spezifische Objekte erfordern weitere Einzelprüfung. Die Datensätze enthalten ausdrücklich markierte **Zugangspunkte** für getrennte Spielgebiete (Vergessenes Tal über Darkfall Cave; Dead Man's Dread über Orphan's Tear) und keine behaupteten Item-Koordinaten innerhalb dieser Gebiete.
