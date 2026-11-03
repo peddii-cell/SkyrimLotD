@@ -794,8 +794,8 @@
       "loc": {
         "name": "Zugang zum Seelengrab",
         "world": "SoulCairn",
-        "x": 20,
-        "y": 80,
+        "x": 15,
+        "y": 66,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
@@ -819,8 +819,8 @@
       "loc": {
         "name": "Knochenhof / Valerica",
         "world": "SoulCairn",
-        "x": 60,
-        "y": 23,
+        "x": 61,
+        "y": 39,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
@@ -844,8 +844,8 @@
       "loc": {
         "name": "Arvaks Schädel",
         "world": "SoulCairn",
-        "x": 82,
-        "y": 46,
+        "x": 73,
+        "y": 53,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
@@ -869,8 +869,8 @@
       "loc": {
         "name": "Jiub · Ungeduld eines Heiligen",
         "world": "SoulCairn",
-        "x": 68,
-        "y": 62,
+        "x": 58,
+        "y": 57,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
@@ -894,8 +894,8 @@
       "loc": {
         "name": "Hort des Schnitters",
         "world": "SoulCairn",
-        "x": 82,
-        "y": 79,
+        "x": 70,
+        "y": 64,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
@@ -919,8 +919,8 @@
       "loc": {
         "name": "Morven Stroud",
         "world": "SoulCairn",
-        "x": 46,
-        "y": 53,
+        "x": 39,
+        "y": 59,
         "approx": true
       },
       "steps": "Schematische Lage im Seelengrab: bitte große Orientierungspunkte nutzen, keine exakten Kartenkoordinaten.",
