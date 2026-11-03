@@ -168,13 +168,13 @@ function inventoryTypeOf(i){
  if(/\bscrolls?\b/.test(n))return "Schriftrollen";
  if(/\bpotion\b|\bpoison\b|\belixir\b|\bphilter\b|\bdraught\b|\btonic\b|\bskooma\b/.test(n))return "Zaubertränke";
  if(/\bin a jar\b/.test(n))return "Sonstiges";
- if(i.t===8||/^\d+ lessons\b|\bspell tomes?\b|\btomes?\b|\bbook\b|\bjournal\b|\bdiary\b|\bledger\b|\blogbook\b|\bnotes?\b|\bletters?\b|\bsermon\b|\bmanuscript\b|\bcodex\b|\bchronicle\b|\bdecree\b|\bcharter\b|\brecipe\b|\bmap\b|\bvolumes?\b|\bvol[.]?\s*[0-9ivx]+\b|\btreatise\b|\bguidebook\b|\bopus\b|\bproclamation\b|\bpamphlet\b|\bcompendium\b|\bannals\b|\bencyclopedia\b/.test(n)||/\bbookshelf\b|\bbooks? display\b|\bjournal displays?\b/.test(d))return "Bücher";
+ if(i.t===8||/^\d+ lessons\b|\bspell tomes?\b|\btomes?\b|\bbook\b|\bjournal\b|\bdiary\b|\bledger\b|\blogbook\b|\bnotes?\b|\bletters?\b|\bsermon\b|\bmanuscript\b|\bcodex\b|\bchronicle\b|\bdecree\b|\bcharter\b|\brecipe\b|\bmap\b|\bvolumes?\b|\bvol[.]?\s*[0-9ivx]+\b|\btreatise\b|\bguidebook\b|\bguide\b|\bv\d+\b|\bopus\b|\bproclamation\b|\bpamphlet\b|\bcompendium\b|\bannals\b|\bencyclopedia\b/.test(n)||/\bbookshelf\b|\bbooks? display\b|\bjournal displays?\b/.test(d))return "Bücher";
  if(/\b(ale|mead|wine|brandy|rum|beer|stew|soup|loaf|bread|cheese|pie|cake|sweetroll|apple|cabbage|carrot|potato|tomato|venison|roasted|cooked|grilled|jerky|salmon steak|honey nut|food|bottle of milk|boiled)\b/.test(n)||/\breserve vintages\b|\bdining table\b/.test(d))return "Essen";
  if(/\brare curios\b/.test(d)||/\b(alchemy ingredient|ingredient)\b/.test(d))return "Zutaten";
  if(/\b(wing|thorax|moth|dartwing|deathbell|salt pile|salts|root|stalk|spore|petals?|bloom|mushroom|ichor|venin|daedra heart|blister pod|bliss bug|chokeberry|blue mountain flower|lavender|netch jelly|sabre cat tooth|giant.s toe|powdered mammoth tusk|gleamblossom|creep cluster|torchbug|beehive husk|skeever tail|butterfly|hagraven feathers|spriggan sap|vampire dust)\b/.test(n)&&!/\b(staff|sword|axe|mace|blade|armor|boots|gauntlets|shield)\b/.test(n))return "Zutaten";
  // Schilde, Ringe und Amulette zählen wie Kleidung/Rüstung zu Bekleidung.
  if(/\b(armor|armour|mail|cuirass|gauntlets?|gloves?|bracers?|boots?|shoes?|helmet|helm|hood|robes?|clothes|clothing|cloak|cowl|circlet|crown|necklace|amulet|ring|earrings?|masks?|caps?|shield|pauldrons?|greaves?|belt|outfit|tunic|dress|hat|sabatons?|wristguards?|locket|bracelets?|backpacks?)\b/.test(n)||/\b(jewelry|amulets|rings|headwear|boots & gloves|armor display|dragon priest masks)\b/.test(d))return "Bekleidung";
- if(/\b(swords?|greatswords?|daggers?|blades?|bows?|crossbows?|arrows?|bolts?|axes?|battleaxes?|warhammers?|hammers?|maces?|staves?|staff|spear|lance|rapier|scimitar|saber|sabre|halberd|flail|katana|cudgel|pickaxe|war axe|rod|cleaver)\b/.test(n)||/\b(weapons display|daggers display|staff display|lunar weapons|snow elf weapons|pickaxe displays)\b/.test(d))return "Waffen";
+ if(/\b(swords?|greatswords?|daggers?|blades?|bows?|crossbows?|arrows?|bolts?|axes?|battleaxes?|warhammers?|hammers?|maces?|staves?|staff|spear|lance|rapier|scimitar|saber|sabre|halberd|flail|katana|cudgel|pickaxe|war axe|warmace|blackblade|blackbow|shiv|rod|cleaver)\b/.test(n)||/\b(weapons display|daggers display|staff display|lunar weapons|snow elf weapons|pickaxe displays)\b/.test(d))return "Waffen";
  if(/\b(flora and entomology|flora\/fauna ingredients)\b/.test(d))return "Zutaten";
  // Shouts, Dioramen, Funde ohne genauen Item-Record und Ausstellungsobjekte:
  return "Sonstiges";
@@ -215,8 +215,32 @@ function updateRegionUI(){
  $("regionGroup").hidden=!active;
  if(!active)$("regionFilter").value="all";
 }
+// UI-Filter separat vom dauerhaft lokal gespeicherten Museum-Fortschritt sichern.
+const UI_KEY="lotd-museumsatlas-ui-v1";
+const UI_FILTER_IDS=["questGroup","regionFilter","category","progress","srcFilter","hallFilter","mapFilter","sortFilter"];
+function saveUi(){
+ try{const state={view,search:$("search").value};for(const id of UI_FILTER_IDS)state[id]=$(id).value;
+ localStorage.setItem(UI_KEY,JSON.stringify(state))}catch{}
+}
+function restoreUi(){
+ let state;try{state=JSON.parse(localStorage.getItem(UI_KEY)||"null")}catch{}
+ if(!state||typeof state!=="object")return;
+ if(["adventure","craft"].includes(state.view))view=state.view;
+ for(const [mode,id] of [["adventure","viewAdventure"],["craft","viewCraft"]]){
+  $(id).classList.toggle("active",mode===view);
+  $(id).setAttribute("aria-pressed",String(mode===view));
+ }
+ $("questGroup").style.display=view==="adventure"?"":"none";
+ for(const id of UI_FILTER_IDS){
+  const e=$(id),v=state[id];
+  if(typeof v==="string"&&Array.from(e.options).some(o=>o.value===v))e.value=v;
+ }
+ if(typeof state.search==="string")$("search").value=state.search.slice(0,250);
+ $("search").placeholder=view==="craft"?"Rüstung oder Herstellungsgegenstand …":"Gegenstand, Quest, Ort suchen …";
+}
+
 function filter(){
- updateRegionUI();
+ updateRegionUI();saveUi();
  const s=norm($("search").value),c=$("category").value,src=$("srcFilter").value,h=$("hallFilter").value,st=$("progress").value,m=$("mapFilter").value,qg=$("questGroup").value,rg=$("regionFilter").value;
  shown=all.filter(i=>{
  const area=view==="adventure"?!i.craftOnly:!!i.craftOnly;
@@ -234,7 +258,7 @@ function list(){
   $("itemList").querySelectorAll("[data-region]").forEach(b=>b.onclick=()=>{$("regionFilter").value=b.dataset.region;filter()});
   $("more").hidden=true;return;
  }
- const overview=view==="adventure"&&$("questGroup").value==="all"&&!norm($("search").value)&&$("category").value==="all"&&$("hallFilter").value==="all"&&$("srcFilter").value==="all"&&$("progress").value==="all"&&$("mapFilter").value==="all";
+ const overview=view==="adventure"&&$("questGroup").value==="all"&&!norm($("search").value)&&$("category").value==="all"&&$("hallFilter").value==="all"&&$("srcFilter").value==="all"&&$("progress").value==="all"&&$("mapFilter").value==="all"&&$("sortFilter").value==="original";
  if(overview){const counts=new Map();for(const i of all.filter(x=>!x.craftOnly))counts.set(i.questGroup,(counts.get(i.questGroup)||0)+1);
  $("visibleCounter").textContent="Questlinien";
  $("itemList").innerHTML='<div class="quest-overview"><p>Wähle links deine Questreihe. Herstellbare Standardgegenstände liegen separat unter „Herstellung“.</p>'+QUEST_GROUPS.map(([id,name])=>'<button type="button" data-group="'+id+'"><strong>'+esc(name)+'</strong><small>'+(counts.get(id)||0)+' Einträge ›</small></button>').join("")+'</div>';
@@ -318,6 +342,6 @@ const fragmentLabels={"guide-gauldur-2":"Gauldur-Amulettfragment · Jyrik","guid
 // Zusätzliche Guides sind Referenzdaten, keine eigenständigen Items. Nur reale einzelne
 // Sammelgegenstände (hier: die drei Gauldur-Fragmente) erscheinen im Questführer.
 // Das gilt für sämtliche Questschritte, Ortsnotizen, Zugänge und Orientierungspunkte.
-all.push(...guides.items.filter(o=>fragmentLabels[o.id]).map(o=>({...o,n:fragmentLabels[o.id]||o.n,de:fragmentLabels[o.id]||o.de,series:fragmentLabels[o.id]?null:o.series,origin:o.origin||source(o),type:fragmentLabels[o.id]?"Quest":(o.type||type(o)),inventoryType:inventoryTypeOf({...o,n:fragmentLabels[o.id]||o.n}),loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:"side",region:regionOf(o)})));opts("category",INVENTORY_TYPES.map(x=>[x,x]),"Alle Inventarkategorien");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+fragments.length+" Gauldur-Fragmente im Questführer";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
+all.push(...guides.items.filter(o=>fragmentLabels[o.id]).map(o=>({...o,n:fragmentLabels[o.id]||o.n,de:fragmentLabels[o.id]||o.de,series:fragmentLabels[o.id]?null:o.series,origin:o.origin||source(o),type:fragmentLabels[o.id]?"Quest":(o.type||type(o)),inventoryType:"Bekleidung",loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:"side",region:regionOf(o)})));opts("category",INVENTORY_TYPES.map(x=>[x,x]),"Alle Inventarkategorien");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();restoreUi();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+fragments.length+" Gauldur-Fragmente im Questführer";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
 boot();
 })();
