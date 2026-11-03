@@ -1,40 +1,49 @@
-# Skyrim – Legacy of the Dragonborn: Museumsatlas
+# Skyrim · Legacy of the Dragonborn — Museumsatlas
 
-Interaktiver **Prototyp** für einen Sammel-Run mit Skyrim Anniversary Edition, allen Creation-Club-Inhalten und Legacy of the Dragonborn (ohne zusätzliche Questmods wie Wyrmstooth oder The Forgotten City).
+**Live-Seite (nach GitHub Pages-Aktivierung):** https://peddii-cell.github.io/SkyrimLotD/
 
-## Website
+## Derzeit umgesetzt
 
-Nach Aktivierung von GitHub Pages: https://peddii-cell.github.io/SkyrimLotD/
+- 2.769 aus einer Community-Checkliste kuratierte Einträge, verteilt auf 13 Museumshallen
+- Ausschluss der ausdrücklich als eigenständige Fremdmods ausgewiesenen Inhalte (Wyrmstooth, Forgotten City, Vigilant usw.)
+- Berücksichtigt werden Skyrim-Hauptspiel, Dawnguard, Dragonborn, Hearthfire, ausgewiesene Anniversary-/Creation-Club-Inhalte sowie Legacy of the Dragonborn selbst
+- Suche nach Namen, Ort, Quest oder Museumsbereich; Filter nach Art, Inhalt, Halle, Fortschritt und regionaler Kartierbarkeit
+- Deutsche Benutzeroberfläche, deutsche Itemnamen nur bei bekannten sicheren Übersetzungen; englische Quellnamen bleiben zum Nachschlagen erhalten
+- Anklickbare Sammelliste mit Fortschrittsanzeige und lokalem Browser-Speicher, JSON-Export und Import
+- Zoombare und verschiebbare Karte mit separat eingefärbten Queststart- und Fundregion-Markern, soweit sich die Quelle einer Region zuordnen lässt
+- Optionale Regionsübersicht mit der Anzahl zugehöriger Einträge; Umschaltung Himmelsrand / Solstheim
 
-## Enthalten
+## Wichtig: Dies ist noch **keine verifizierte vollständige LotD-v6-Datenbank**
 
-- Nordisch gestaltete deutsche Oberfläche
-- 10 Beispielsammlerstücke aus unterschiedlichen Kategorien
-- Interaktive zoombare 2D-Kartenansicht mit Queststart- und Fundort-Markern
-- Questvoraussetzungen, Beschreibungen und externe Quellen
-- Suche, Filter und Fortschrittsanzeige
-- Im jeweiligen Browser gespeicherte Häkchen sowie JSON-Backup
+Die 2.769 Einträge stammen aus einer öffentlichen, von Fans gepflegten Tabelle, deren Quellenfilter nur anhand der dortigen *Content Source*-Spalte erfolgt. Nicht alle Quellenzuordnungen oder Museumsplätze sind für die aktuelle Modversion verifiziert. Die Liste kann Einträge enthalten, die in der gewünschten Modkonfiguration nicht verfügbar sind, und umgekehrt Einträge auslassen.
 
-## Einschränkungen des Prototyps
+Die Quelltabelle enthält bei vielen Gegenständen den Fundort, den Museumsplatz und die Quest, **aber nicht stets den genauen Queststarter, alle Voraussetzungen, eine Schritt-für-Schritt-Anleitung oder Koordinaten**. In der Website werden deshalb keine fehlenden Koordinaten erfunden: Die verfügbaren Pins kennzeichnen nur eine **ungefähre Region**, niemals einen bestätigten exakten Loot-Standort. Der blaue Queststart-Marker erscheint nur für eine kleine Zahl separat bekannter Quests. Einträge ohne geprüften Marker zeigen den Fundorttext.
 
-- Die zehn Gegenstände sind **keine vollständige LotD-Sammlung**.
-- Die Kartenmarker sind ungefähr positioniert; exakte Fundortkoordinaten müssen noch überprüft werden.
-- Die verlinkte 3D-Karte von Tamriel.app zeigt **nicht** automatisch unsere eigenen Marker; die interaktive Markeransicht auf dieser Website ist 2D.
-- Die Genauigkeit der einzelnen Quests und Übersetzungen muss vor Erstellung einer vollständigen Checkliste weiter geprüft werden.
-- Häkchen werden lokal im jeweiligen Browser gespeichert, nicht über GitHub synchronisiert. Für Gerätewechsel das JSON-Backup verwenden.
-- Die eingebundene UESP-Karte wird von einem externen Server geladen und benötigt Internetzugang.
+**Die verlinkte externe Tamriel.app-3D-Karte übernimmt unsere Marker nicht.** Sie wird separat geöffnet. Die eigene 2D-Kartenansicht bindet eine öffentlich zugängliche UESP-Karte als Hintergrund ein, bei Netz- oder Ladefehlern erscheint eine stilisierte Ersatzkarte.
 
-## GitHub Pages aktivieren
+## Daten & Dateien
 
-1. Im Repository auf **Settings > Pages** gehen.
-2. Unter **Build and deployment** die Option **Deploy from a branch** wählen.
-3. **main** und **/(root)** auswählen und **Save** klicken.
-4. Auf https://peddii-cell.github.io/SkyrimLotD/ warten, bis die Seite verfügbar ist.
+- `index.html` — Website / Darstellung
+- `app.js` — Suche, Filter, Karte, Fortschritt und Import/Export
+- `data/hall-01.json` … `data/hall-13.json` — nach Museumsraum gefilterte Sammlereinträge
 
-## Quellen und 3D-Kartenreferenz
+**Community-Quelle:** https://docs.google.com/spreadsheets/d/1uWJs4adekvTOL-z7bRSf-JwUi7bX1bFQqlKPEv5k0qc/edit
 
+Weitere Nachschlagewerke:
+- https://legacy-of-the-dragonborn.fandom.com/wiki/Spoiler_List
 - https://en.uesp.net/
 - https://tamriel.app/skyrim/interactive-map
-- https://skyrimmap.com/de/about
 
-Dieses Projekt ist ein Fan-Prototyp und keine offizielle Bethesda-/LotD-Website.
+Diese Quellen sind keine Garantie für vollständige, versionsgleiche oder fehlerfreie Daten. Bei der weiteren Validierung sollte je Eintrag mit den tatsächlichen v6-Ausstellungsdaten verglichen werden.
+
+## GitHub Pages
+
+**Settings → Pages → Build and deployment → Deploy from a branch → main → /(root) → Save.**
+
+Danach erscheint die Website unter https://peddii-cell.github.io/SkyrimLotD/ (ggf. nach einigen Minuten).
+
+## Fortschritt / Datenschutz
+
+Häkchen werden nur im lokalen Speicher des verwendeten Browsers gespeichert, **nicht im GitHub-Konto**. Backup über die Schaltfläche `Fortschritt sichern` herunterladen. Beim Gerätewechsel per `Importieren` laden. Änderungen am Browser/Cache können ohne Backup zum Verlust von Markierungen führen.
+
+Nicht kommerzielles Fanprojekt. Keine offizielle Seite von Bethesda oder den LotD-Entwicklern.
