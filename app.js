@@ -85,6 +85,12 @@ P.push(
  {name:"Horkerinsel",world:"Solstheim",x:90,y:18,keys:["horker island","horkerinsel","gyldenhul barrow"]},
  {name:"Bruchhelmtal",world:"Skyrim",x:91,y:82,keys:["broken helm hollow","bruchhelmtal"]}
 );
+// Quest- und Reliktorte mit ungefähren Weltkartenpositionen.
+P.push(
+ {name:"Raldbthar",world:"Skyrim",x:70,y:29,keys:["raldbthar"],approx:true},
+ {name:"Eisenbundhügelgrab (Ironbind Barrow)",world:"Skyrim",x:69,y:21,keys:["ironbind barrow","eisenbundhügelgrab"],approx:true},
+ {name:"Hochzeitshof in Einsamkeit",world:"Skyrim",x:30,y:17,keys:["hochzeitshof","temple of the divines"],approx:true}
+);
 // Solstheim und Seelengrab: bekannte Fundregionen, näherungsweise auf den Gebietskarten.
 P.push(
  {name:"Hrothmunds Hügelgrab",world:"Solstheim",x:40,y:31,keys:["hrothmund's barrow","hrothmunds barrow"]},
@@ -107,7 +113,14 @@ const ITEM_NOTES={
  "s1r54":{de:"Horkerfluch",p:"Horkerinsel, nordöstlich vor Solstheim, östlich des Skaaldorfes. Beim toten Saden in einem Horker.",
  link:"https://skyrim.fandom.com/de/wiki/Horkerinsel"},
  "s1r15":{de:"Sixth House Bell Hammer",p:"Bruchhelmtal (Broken Helm Hollow) südöstlich von Rifton. Hinter einer Geheimtür; eine Kette öffnet den Zugang. In LotD SSE kann die Waffe erst nach Beginn von „An Interesting Prospect“ erscheinen.",
- link:"https://legacy-of-the-dragonborn.fandom.com/wiki/Sixth_House_Bell_Hammer"}
+ link:"https://legacy-of-the-dragonborn.fandom.com/wiki/Sixth_House_Bell_Hammer"},
+ "s1r2":{p:"Raldbthar (Dwemer-Ruine): Alain Dufont trägt Aegisbane. Quest: Mourning Never Comes (Dunkle Bruderschaft).",q:"Mourning Never Comes",link:"https://skyrim.fandom.com/wiki/Mourning_Never_Comes",
+ start:{name:"Astrid · Zuflucht der Dunklen Bruderschaft",world:"Skyrim",x:26,y:78,hint:"Nach den ersten Nazir-Aufträgen Astrid ansprechen. Muiri findest du danach in Markarth (Tagsüber Hag's Cure, abends Silver-Blood Inn).",approx:true}},
+ "s1r11":{p:"Einsamkeit: Auf der erhöhten Terrasse / Brüstung am Hochzeitshof nahe dem Tempel der Göttlichen. Gabriella hinterlässt dort den Bogen Firiniel's End.",q:"Bound Until Death",link:"https://elderscrolls.fandom.com/wiki/Firiniel%27s_End",
+ start:{name:"Astrid · Zuflucht der Dunklen Bruderschaft",world:"Skyrim",x:26,y:78,hint:"Quest „Bound Until Death“ bei Astrid. Gabriella verrät den Bogen-Fundort vor dem Attentat.",approx:true}},
+ "s1r6":{p:"Seelengrab (Soul Cairn), Schnitterhort (Reaper's Lair): Loot vom Schnitter nach dem Kampf. Zugang zum Seelengrab über Valericas Studierzimmer während/nach „Chasing Echoes“.",link:"https://legacy-of-the-dragonborn.fandom.com/wiki/Reaper%27s_Bane"},
+ "s1r16":{p:"Eisenbundhügelgrab (Ironbind Barrow): Hinter dem Thron von Kriegsherr Gathrik in der letzten Kammer. „Coming of Age“ beginnt bei Salma und Beem-Ja am Grab-Eingang.",link:"https://legacy-of-the-dragonborn.fandom.com/wiki/Steel_Battleaxe_of_Fiery_Souls",
+ start:{name:"Salma und Beem-Ja · Ironbind Barrow",world:"Skyrim",x:69,y:21,hint:"Die beiden Abenteurer stehen am Eingang; die Waffe liegt hinter Gathriks Thron.",approx:true}}
 };
 
 P.push(
@@ -261,6 +274,6 @@ async function boot(){try{let arr=await Promise.all(Array.from({length:13},(_,k)
    const additional=atlas.places.filter(a=>Array.isArray(a)&&a.length===3&&typeof a[0]==="string"&&Number.isFinite(a[1])&&Number.isFinite(a[2])).map(a=>({name:a[0],world:"Skyrim",x:a[1],y:a[2],keys:[a[0]],approx:true,source:"SSEEdit MapMarker"}));
    P.unshift(...additional);
  }
- museumCount=arr.reduce((n,x)=>n+x.items.length,0);all=arr.flatMap(x=>x.items).map(o=>{const note=ITEM_NOTES[o.id];const item={...o,de:note?.de||NAMES[o.n]||"",p:note?.p||o.p,sourceUrl:note?.link||"",origin:source(o),type:type(o),start:questpoint(o.q),craftOnly:isCraftOnly(o),questGroup:questGroupOf(o)};item.loc=point(item.p);return {...item,region:regionOf(item)}});guideCount=guides.items.length;all.push(...guides.items.map(o=>({...o,origin:o.origin||source(o),type:o.type||type(o),loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:questGroupOf(o),region:regionOf(o)})));opts("category",[...new Set(all.map(i=>i.type))].sort().map(x=>[x,x]),"Alle Arten");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+guideCount+" zusätzliche Sammelziele";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
+ museumCount=arr.reduce((n,x)=>n+x.items.length,0);all=arr.flatMap(x=>x.items).map(o=>{const note=ITEM_NOTES[o.id];const item={...o,de:note?.de||NAMES[o.n]||"",p:note?.p||o.p,q:note?.q||o.q,sourceUrl:note?.link||"",origin:source(o),type:type(o),start:note?.start||questpoint(note?.q||o.q),craftOnly:isCraftOnly(o),questGroup:questGroupOf({...o,q:note?.q||o.q})};item.loc=point(item.p);return {...item,region:regionOf(item)}});guideCount=guides.items.length;all.push(...guides.items.map(o=>({...o,origin:o.origin||source(o),type:o.type||type(o),loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:questGroupOf(o),region:regionOf(o)})));opts("category",[...new Set(all.map(i=>i.type))].sort().map(x=>[x,x]),"Alle Arten");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+guideCount+" zusätzliche Sammelziele";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
 boot();
 })();
