@@ -150,7 +150,7 @@ const START=[
 ["boethiah's calling","Schrein von Boethiah","Skyrim",87,48,"Ab Stufe 30 den Schrein aufsuchen."],
 ["discerning the transmundane","Septimus-Signus-Außenposten","Skyrim",68,9,"Septimus Signus aufsuchen."]
 ];
-let all=[],shown=[],selected=null,checks={},world="Skyrim",scale=1,dx=0,dy=0,drag=null,regions=false,pinMode="find",page=40,view="adventure",museumCount=0,guideCount=0;
+let all=[],shown=[],selected=null,checks={},world="Skyrim",scale=1,dx=0,dy=0,drag=null,regions=false,pinMode="find",page=40,view="adventure",museumCount=0;
 try{checks=JSON.parse(localStorage.getItem("lotd-museumsatlas-v2")||"{}")||{}}catch{}
 function save(){try{localStorage.setItem("lotd-museumsatlas-v2",JSON.stringify(checks))}catch{}}
 function source(i){const s=norm(i.s);if(s.includes("(cc)")||s.includes("creation club"))return "Anniversary / CC";if(s.includes("dawnguard"))return "Dawnguard";if(s.includes("dragonborn"))return "Dragonborn";if(s.includes("hearthfire"))return "Hearthfire";if(s.includes("legacy"))return "Legacy of the Dragonborn";if(s==="base game")return "Skyrim";return "Unbestimmte Quelle"}
@@ -194,7 +194,7 @@ function filter(){
  updateRegionUI();
  const s=norm($("search").value),c=$("category").value,src=$("srcFilter").value,h=$("hallFilter").value,st=$("progress").value,m=$("mapFilter").value,qg=$("questGroup").value,rg=$("regionFilter").value;
  shown=all.filter(i=>{
- const area=view==="adventure"?!i.craftOnly&&!i.series:view==="collections"?!!i.series:!!i.craftOnly&&!i.series;
+ const area=view==="adventure"?!i.craftOnly:!!i.craftOnly;
  return area&&(view!=="adventure"||qg==="all"||i.questGroup===qg)&&(rg==="all"||i.region===rg)&&(c==="all"||i.type===c)&&(src==="all"||i.origin===src)&&(h==="all"||String(i.t)===h)&&(st==="all"||(st==="done")===!!checks[i.id])&&(m==="all"||(m==="with"&&!!(i.loc||i.start))||(m==="without"&&!i.loc&&!i.start))&&(!s||norm([i.n,i.de,i.q,i.p,i.d,i.origin,HALLS[i.t],i.series].join(" ")).includes(s));
  });
  const sort=$("sortFilter").value;if(sort==="alpha")shown.sort((a,b)=>a.n.localeCompare(b.n));if(sort==="miss")shown.sort((a,b)=>Number(b.m)-Number(a.m));if(sort==="quest")shown.sort((a,b)=>Number(!!b.q)-Number(!!a.q));
@@ -210,7 +210,7 @@ function list(){
   $("more").hidden=true;return;
  }
  const overview=view==="adventure"&&$("questGroup").value==="all"&&!norm($("search").value)&&$("category").value==="all"&&$("hallFilter").value==="all"&&$("srcFilter").value==="all"&&$("progress").value==="all"&&$("mapFilter").value==="all";
- if(overview){const counts=new Map();for(const i of all.filter(x=>!x.craftOnly&&!x.series))counts.set(i.questGroup,(counts.get(i.questGroup)||0)+1);
+ if(overview){const counts=new Map();for(const i of all.filter(x=>!x.craftOnly))counts.set(i.questGroup,(counts.get(i.questGroup)||0)+1);
  $("visibleCounter").textContent="Questlinien";
  $("itemList").innerHTML='<div class="quest-overview"><p>Wähle links deine Questreihe. Herstellbare Standardgegenstände liegen separat unter „Herstellung“.</p>'+QUEST_GROUPS.map(([id,name])=>'<button type="button" data-group="'+id+'"><strong>'+esc(name)+'</strong><small>'+(counts.get(id)||0)+' Einträge ›</small></button>').join("")+'</div>';
  $("itemList").querySelectorAll("[data-group]").forEach(b=>b.onclick=()=>{$("questGroup").value=b.dataset.group;filter()});$("more").hidden=true;return;
@@ -265,31 +265,34 @@ function move(){$("scene").style.transform="translate("+dx+"px,"+dy+"px) scale("
 function clamp(){let r=$("mapframe").getBoundingClientRect();dx=Math.min(0,Math.max(r.width-r.width*scale,dx));dy=Math.min(0,Math.max(r.height-r.height*scale,dy))}
 function zoom(k,x,y){let r=$("mapframe").getBoundingClientRect(),ox=scale,px=x??r.width/2,py=y??r.height/2;scale=Math.max(1,Math.min(5,scale*k));dx=px-(px-dx)*scale/ox;dy=py-(py-dy)*scale/ox;clamp();move()}
 function focus(k){const p=k==="start"?selected?.start:selected?.loc;if(!p)return;if(world!==p.world)setWorld(p.world);let r=$("mapframe").getBoundingClientRect();scale=1.8;dx=r.width/2-r.width*p.x/100*scale;dy=r.height/2-r.height*p.y/100*scale;clamp();move()}
-function bind(){for(const id of ["search","category","progress","srcFilter","hallFilter","mapFilter","sortFilter","questGroup","regionFilter"])$(id).addEventListener(id==="search"?"input":"change",filter);for(const [mode,id] of [["adventure","viewAdventure"],["collections","viewCollections"],["craft","viewCraft"]]){$(id).onclick=()=>{
+function bind(){for(const id of ["search","category","progress","srcFilter","hallFilter","mapFilter","sortFilter","questGroup","regionFilter"])$(id).addEventListener(id==="search"?"input":"change",filter);for(const [mode,id] of [["adventure","viewAdventure"],["craft","viewCraft"]]){$(id).onclick=()=>{
  view=mode;
- for(const [m,b] of [["adventure","viewAdventure"],["collections","viewCollections"],["craft","viewCraft"]]){$(b).classList.toggle("active",m===view);$(b).setAttribute("aria-pressed",String(m===view))}
+ for(const [m,b] of [["adventure","viewAdventure"],["craft","viewCraft"]]){$(b).classList.toggle("active",m===view);$(b).setAttribute("aria-pressed",String(m===view))}
  $("questGroup").style.display=mode==="adventure"?"":"none";
  for(const opt of ["category","srcFilter","hallFilter","mapFilter","sortFilter","questGroup","progress","regionFilter"])$(opt).selectedIndex=0;
  $("search").value="";
- $("search").placeholder=mode==="craft"?"Rüstung oder Herstellungsgegenstand …":mode==="collections"?"Sammelreihe oder Ort suchen …":"Gegenstand, Quest, Ort suchen …";
+ $("search").placeholder=mode==="craft"?"Rüstung oder Herstellungsgegenstand …":"Gegenstand, Quest, Ort suchen …";
  filter();
  }}
 
  $("more").onclick=()=>{page+=40;list()};$("worldSkyrim").onclick=()=>setWorld("Skyrim");$("worldSolstheim").onclick=()=>setWorld("Solstheim");$("worldSoulCairn").onclick=()=>setWorld("SoulCairn");$("zoomIn").onclick=()=>zoom(1.25);$("zoomOut").onclick=()=>zoom(.8);$("home").onclick=()=>{scale=1;dx=dy=0;move()};$("mapframe").addEventListener("wheel",e=>{e.preventDefault();let r=$("mapframe").getBoundingClientRect();zoom(e.deltaY<0?1.15:1/1.15,e.clientX-r.left,e.clientY-r.top)},{passive:false});$("mapframe").addEventListener("pointerdown",e=>{if(e.target.closest("button"))return;drag={x:e.clientX,y:e.clientY,dx,dy};$("mapframe").setPointerCapture(e.pointerId)});$("mapframe").addEventListener("pointermove",e=>{if(!drag)return;dx=drag.dx+e.clientX-drag.x;dy=drag.dy+e.clientY-drag.y;clamp();move()});for(let t of ["pointerup","pointercancel","lostpointercapture"])$("mapframe").addEventListener(t,()=>drag=null);
 $("export").onclick=()=>{let b=new Blob([JSON.stringify({version:2,completed:checks,date:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="lotd-fortschritt.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)};$("import").onclick=()=>$("fileImport").click();$("fileImport").onchange=async e=>{let f=e.target.files?.[0];if(!f)return;try{let o=JSON.parse(await f.text());if(!o.completed||typeof o.completed!=="object")throw Error("Ungültiges Backup");if(confirm("Fortschritt aus Backup übernehmen?")){for(const i of all)if(Object.hasOwn(o.completed,i.id))checks[i.id]=!!o.completed[i.id];save();stats();filter();details()}}catch(err){alert(err.message)}e.target.value=""};$("reset").onclick=()=>{if(confirm("Alle Häkchen zurücksetzen?")){checks={};save();stats();filter();details()}}}
 async function boot(){try{let arr=await Promise.all(Array.from({length:13},(_,k)=>fetch("data/hall-"+String(k+1).padStart(2,"0")+".json").then(r=>{if(!r.ok)throw Error("Daten "+(k+1));return r.json()})));
- let guides=await fetch("data/guides.json").then(r=>{if(!r.ok)throw Error("Zusatz-Sammelziele");return r.json()});
+ let guides=await fetch("data/guides.json").then(r=>{if(!r.ok)throw Error("Verknüpfte Fundorte");return r.json()});
  // Optionale, quellbezogene Referenz-Orte; ein Fehler dort darf den Museumskatalog nicht blockieren.
  let atlas=await fetch("data/skyrim-places.json").then(r=>r.ok?r.json():{places:[]}).catch(()=>({places:[]}));
  if(Array.isArray(atlas.places)){
    const additional=atlas.places.filter(a=>Array.isArray(a)&&a.length===3&&typeof a[0]==="string"&&Number.isFinite(a[1])&&Number.isFinite(a[2])).map(a=>({name:a[0],world:"Skyrim",x:a[1],y:a[2],keys:[a[0]],approx:true,source:"SSEEdit MapMarker"}));
    P.unshift(...additional);
  }
- museumCount=arr.reduce((n,x)=>n+x.items.length,0);all=arr.flatMap(x=>x.items).map(o=>{const note=ITEM_NOTES[o.id];const item={...o,de:note?.de||NAMES[o.n]||"",p:note?.p||o.p,q:note?.q||o.q,sourceUrl:note?.link||"",origin:source(o),type:type(o),start:note?.start||questpoint(note?.q||o.q),craftOnly:isCraftOnly(o),questGroup:questGroupOf({...o,q:note?.q||o.q})};item.loc=point(item.p);return {...item,region:regionOf(item)}});guideCount=guides.items.length;
+ museumCount=arr.reduce((n,x)=>n+x.items.length,0);all=arr.flatMap(x=>x.items).map(o=>{const note=ITEM_NOTES[o.id];const item={...o,de:note?.de||NAMES[o.n]||"",p:note?.p||o.p,q:note?.q||o.q,sourceUrl:note?.link||"",origin:source(o),type:type(o),start:note?.start||questpoint(note?.q||o.q),craftOnly:isCraftOnly(o),questGroup:questGroupOf({...o,q:note?.q||o.q})};item.loc=point(item.p);return {...item,region:regionOf(item)}});
 const stones=guides.items.filter(o=>o.series==="Steine von Barenziah");
 const fragments=guides.items.filter(o=>["guide-gauldur-2","guide-gauldur-3","guide-gauldur-4"].includes(o.id));
 linkedGroups["s4r85"]=stones;linkedGroups["s1r77"]=fragments;
 const fragmentLabels={"guide-gauldur-2":"Gauldur-Amulettfragment · Jyrik","guide-gauldur-3":"Gauldur-Amulettfragment · Mikrul","guide-gauldur-4":"Gauldur-Amulettfragment · Sigdis"};
-all.push(...guides.items.filter(o=>fragmentLabels[o.id]||o.series==="Seelengrab: Orientierung").map(o=>({...o,n:fragmentLabels[o.id]||o.n,de:fragmentLabels[o.id]||o.de,series:fragmentLabels[o.id]?null:o.series,origin:o.origin||source(o),type:fragmentLabels[o.id]?"Quest":(o.type||type(o)),loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:"side",region:regionOf(o)})));opts("category",[...new Set(all.map(i=>i.type))].sort().map(x=>[x,x]),"Alle Arten");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+guideCount+" zusätzliche Sammelziele";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
+// Zusätzliche Guides sind Referenzdaten, keine eigenständigen Items. Nur reale einzelne
+// Sammelgegenstände (hier: die drei Gauldur-Fragmente) erscheinen im Questführer.
+// Das gilt für sämtliche Questschritte, Ortsnotizen, Zugänge und Orientierungspunkte.
+all.push(...guides.items.filter(o=>fragmentLabels[o.id]).map(o=>({...o,n:fragmentLabels[o.id]||o.n,de:fragmentLabels[o.id]||o.de,series:fragmentLabels[o.id]?null:o.series,origin:o.origin||source(o),type:fragmentLabels[o.id]?"Quest":(o.type||type(o)),loc:o.loc||point(o.p),start:o.start||questpoint(o.q),craftOnly:false,questGroup:"side",region:regionOf(o)})));opts("category",[...new Set(all.map(i=>i.type))].sort().map(x=>[x,x]),"Alle Arten");opts("questGroup",QUEST_GROUPS,"Questreihe wählen …");opts("srcFilter",[...new Set(all.map(i=>i.origin))].sort().map(x=>[x,x]),"Alle Inhalte");opts("hallFilter",HALLS.map((h,k)=>[String(k),h]),"Alle Museumshallen");bind();selected=null;$("edition").textContent=museumCount.toLocaleString("de-DE")+" Ausstellungsobjekte · "+fragments.length+" Gauldur-Fragmente im Questführer";const mappedMuseum=all.slice(0,museumCount).filter(i=>i.loc).length;$("metaInfo").textContent="Kartierbar: "+mappedMuseum.toLocaleString("de-DE")+" von "+museumCount.toLocaleString("de-DE")+" Museumseinträgen · Marker teils näherungsweise; unklare / zufällige Fundorte bleiben offen.";setWorld("Skyrim");filter();details();stats()}catch(e){$("itemList").innerHTML='<div class="nothing">Katalog konnte nicht geladen werden. Bitte die GitHub-Pages-Adresse öffnen. '+esc(e.message)+'</div>'; $("edition").textContent="Ladefehler"}}
 boot();
 })();
