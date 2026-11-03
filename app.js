@@ -13,6 +13,9 @@ const REGION_GROUPS=[["Skyrim","Himmelsrand"],["Solstheim","Solstheim"],["SoulCa
 function regionOf(o){
  const p=norm(o.p),n=norm(o.n),src=norm(o.s);
  if(o.loc?.world)return o.loc.world;
+ // Riekling-Ausstellungen gehören zu Solstheim, auch wenn die Checkliste
+ // keinen separaten Fundort im p-Feld enthält.
+ if(/^rieklings? of\b/.test(n)||/\briekling\b/.test(n+" "+p)||/benkongerike|bristleback cave|frossel|glacial cave|karstaag ruins|moesring pass|thirsk mead hall|northern solstheim/.test(n+" "+p))return "Solstheim";
  if(/soul cairn|seelengrab|reaper.s lair|reaper.s bane|boneyard|arvak|morven stroud|jiub/.test(p+" "+n))return "SoulCairn";
  if(/solstheim|raven rock|skaal village|tel mithryn|fort frostmoth|temple of miraak|kolbjorn|kagrumez|fahlbtharz|nchardak|horker island|brodir grove|benkongerike|hrothmund|bloodskal|thirsk|ashfall.s tear/.test(p))return "Solstheim";
  if(!p||/random|leveled|merchant|vendor|anywhere|various|crafted|craftable|forge|smithing|general goods|loot table|unknown|unmarked museum display/.test(p))return "unknown";
@@ -186,7 +189,7 @@ function filter(){
 }
 function list(){
  const rg=$("regionFilter").value,qg=$("questGroup").value;
- if(view==="adventure"&&["side","none"].includes(qg)&&rg==="all"&&!norm($("search").value)){
+ if(view==="adventure"&&["side","none"].includes(qg)&&rg==="all"){
   const counts=new Map(REGION_GROUPS.map(([code])=>[code,shown.filter(x=>x.region===code).length]));
   $("visibleCounter").textContent="Region wählen";
   $("itemList").innerHTML='<div class="quest-overview"><p>Wähle die Region. Nicht sicher verortete Items stehen unter „Noch nicht zugeordnet“.</p>'+REGION_GROUPS.map(([code,label])=>'<button type="button" data-region="'+code+'"><strong>'+label+'</strong><small>'+counts.get(code)+' Einträge ›</small></button>').join("")+'</div>';
