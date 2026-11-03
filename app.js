@@ -103,11 +103,11 @@ P.push(
  {name:"Weißkammhügelgrab",world:"Solstheim",x:47,y:35,keys:["white ridge barrow"]},
  {name:"Rabenfels",world:"Solstheim",x:30,y:79,keys:["raven rock mine","raven rock"]},
  {name:"Hrothmunds Grab",world:"Solstheim",x:39,y:31,keys:["hrothmund's barrow"]},
- {name:"Seelengrab · Schnitterhort",world:"SoulCairn",x:81,y:75,keys:["reaper's lair","reapers lair"]},
- {name:"Seelengrab · Knochenhof",world:"SoulCairn",x:58,y:31,keys:["boneyard"]},
- {name:"Seelengrab · Jiub",world:"SoulCairn",x:67,y:65,keys:["jiub's camp","soul cairn poi jiub"]},
- {name:"Seelengrab · Händler",world:"SoulCairn",x:47,y:52,keys:["morven stroud"]},
- {name:"Seelengrab · Arvaks Schädel",world:"SoulCairn",x:81,y:48,keys:["arvak's skull","arvaks skull"]}
+ {name:"Seelengrab · Schnitterhort",world:"SoulCairn",x:70,y:64,keys:["reaper's lair","reapers lair"]},
+ {name:"Seelengrab · Knochenhof",world:"SoulCairn",x:61,y:39,keys:["boneyard"]},
+ {name:"Seelengrab · Jiub",world:"SoulCairn",x:58,y:57,keys:["jiub's camp","soul cairn poi jiub"]},
+ {name:"Seelengrab · Händler",world:"SoulCairn",x:39,y:59,keys:["morven stroud"]},
+ {name:"Seelengrab · Arvaks Schädel",world:"SoulCairn",x:73,y:53,keys:["arvak's skull","arvaks skull"]}
 );
 const ITEM_NOTES={
  "s1r54":{de:"Horkerfluch",p:"Horkerinsel, nordöstlich vor Solstheim, östlich des Skaaldorfes. Beim toten Saden in einem Horker.",
