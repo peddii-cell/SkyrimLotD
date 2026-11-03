@@ -72,6 +72,24 @@ P.push(
  {name:"Horkerinsel",world:"Solstheim",x:90,y:18,keys:["horker island","horkerinsel","gyldenhul barrow"]},
  {name:"Bruchhelmtal",world:"Skyrim",x:91,y:82,keys:["broken helm hollow","bruchhelmtal"]}
 );
+// Solstheim und Seelengrab: bekannte Fundregionen, näherungsweise auf den Gebietskarten.
+P.push(
+ {name:"Hrothmunds Hügelgrab",world:"Solstheim",x:40,y:31,keys:["hrothmund's barrow","hrothmunds barrow"]},
+ {name:"Kagrumez",world:"Solstheim",x:59,y:73,keys:["kagrumez"]},
+ {name:"Brodirhain",world:"Solstheim",x:52,y:69,keys:["brodir grove"]},
+ {name:"Handelsposten",world:"Solstheim",x:61,y:68,keys:["ramshackle trading post"]},
+ {name:"Fahlbtharz",world:"Solstheim",x:72,y:22,keys:["fahlbtharz"]},
+ {name:"Nchardak",world:"Solstheim",x:82,y:52,keys:["nchardak"]},
+ {name:"Blutskaalhügelgrab",world:"Solstheim",x:29,y:62,keys:["bloodskal barrow"]},
+ {name:"Weißkammhügelgrab",world:"Solstheim",x:47,y:35,keys:["white ridge barrow"]},
+ {name:"Rabenfels",world:"Solstheim",x:30,y:79,keys:["raven rock mine","raven rock"]},
+ {name:"Hrothmunds Grab",world:"Solstheim",x:39,y:31,keys:["hrothmund's barrow"]},
+ {name:"Seelengrab · Schnitterhort",world:"SoulCairn",x:81,y:75,keys:["reaper's lair","reapers lair"]},
+ {name:"Seelengrab · Knochenhof",world:"SoulCairn",x:58,y:31,keys:["boneyard"]},
+ {name:"Seelengrab · Jiub",world:"SoulCairn",x:67,y:65,keys:["jiub's camp","soul cairn poi jiub"]},
+ {name:"Seelengrab · Händler",world:"SoulCairn",x:47,y:52,keys:["morven stroud"]},
+ {name:"Seelengrab · Arvaks Schädel",world:"SoulCairn",x:81,y:48,keys:["arvak's skull","arvaks skull"]}
+);
 const ITEM_NOTES={
  "s1r54":{de:"Horkerfluch",p:"Horkerinsel, nordöstlich vor Solstheim, östlich des Skaaldorfes. Beim toten Saden in einem Horker.",
  link:"https://skyrim.fandom.com/de/wiki/Horkerinsel"},
@@ -165,15 +183,19 @@ function setWorld(w){
  const bg=$("backgroundMap");
  for(const id of ["fallback","solstheimFallback","soulCairnFallback"])$(id).style.display="none";
  bg.style.display="none";
- if(w==="SoulCairn"){$("soulCairnFallback").style.display="block"}
- else{
-   const fallback=$(w==="Skyrim"?"fallback":"solstheimFallback");
-   fallback.style.display="block";
-   bg.onload=()=>{if(world!==w)return;bg.style.display="block";fallback.style.display="none"};
-   bg.onerror=()=>{if(world!==w)return;bg.style.display="none";fallback.style.display="block"};
-   const url=w==="Skyrim"?"https://images.uesp.net/e/ef/SR-map-Skyrim.jpg":"https://images.uesp.net/2/29/SR-map-Solstheim.jpg";
-   if(bg.src!==url)bg.src=url;else if(bg.complete&&bg.naturalWidth>0){bg.style.display="block";fallback.style.display="none"}
- }
+ const fallback=$(w==="Skyrim"?"fallback":w==="Solstheim"?"solstheimFallback":"soulCairnFallback");
+ fallback.style.display="block";
+ // Echte Gebietskarten statt der schematischen Seelengrab-Karte.
+ // Externe Bilder: Bei Ladefehler bleibt eine lokale Orientierungskarte sichtbar.
+ const images={
+   Skyrim:"https://images.uesp.net/e/ef/SR-map-Skyrim.jpg",
+   Solstheim:"https://steamuserimages-a.akamaihd.net/ugc/44244642122492497/88A39C3CA6C19B8A2FC522C8065E1BEF0DDA1EDD/",
+   SoulCairn:"https://i.imgur.com/T4Zc18I.png"
+ };
+ bg.onload=()=>{if(world!==w)return;bg.style.display="block";fallback.style.display="none"};
+ bg.onerror=()=>{if(world!==w)return;bg.style.display="none";fallback.style.display="block"};
+ const url=images[w];
+ if(bg.src!==url)bg.src=url;else if(bg.complete&&bg.naturalWidth>0){bg.style.display="block";fallback.style.display="none"}
  $("threeDLink").style.display=w==="SoulCairn"?"none":"";
  move();pins();
 }
