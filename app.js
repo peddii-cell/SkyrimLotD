@@ -189,8 +189,8 @@ function setWorld(w){
  // Externe Bilder: Bei Ladefehler bleibt eine lokale Orientierungskarte sichtbar.
  const images={
    Skyrim:"https://images.uesp.net/e/ef/SR-map-Skyrim.jpg",
-   Solstheim:"https://steamuserimages-a.akamaihd.net/ugc/44244642122492497/88A39C3CA6C19B8A2FC522C8065E1BEF0DDA1EDD/",
-   SoulCairn:"https://i.imgur.com/T4Zc18I.png"
+   Solstheim:"https://images.uesp.net/2/29/SR-map-Solstheim.jpg",
+   SoulCairn:"https://elderscrolls.fandom.com/wiki/Special:Redirect/file/Soul%20Cairn%20Map%20Render%20(Skyrim).png"
  };
  bg.onload=()=>{if(world!==w)return;bg.style.display="block";fallback.style.display="none"};
  bg.onerror=()=>{if(world!==w)return;bg.style.display="none";fallback.style.display="block"};
